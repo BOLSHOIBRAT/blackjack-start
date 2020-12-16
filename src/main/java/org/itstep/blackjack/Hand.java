@@ -17,6 +17,7 @@ public class Hand {
     public  int getValue() {
         int value = 0;
         for (Card card: cards) {
+            if(!card.isHide())
             value += card.getValue();
         }
         return value;
