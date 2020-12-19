@@ -34,7 +34,7 @@ public class Player {
         return hand.getValue();
     }
 
-    private List<Card> getCards(){
+    List<Card> getCards(){
         return hand.getCards();
     }
 

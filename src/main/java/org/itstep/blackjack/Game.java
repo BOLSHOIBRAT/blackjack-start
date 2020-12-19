@@ -1,24 +1,26 @@
 package org.itstep.blackjack;
 
-import org.itstep.App;
-
 public class Game {
     private final Player player;
     private final Player dealer;
     private final Deck deck;
     private int bet;
-    private final Hand hand;
+    public static final int TWENTY_ONE = 21;
+    public static final int THRESHOLD = 15;
 
 
-    public Game(Player player, Player dealer, Deck deck, int value, Hand hand) {
+    public Game(Player player, Player dealer, Deck deck, int value) {
         this.player = player;
         this.dealer = dealer;
         this.deck = deck;
-        this.hand = hand;
     }
 
     public void hit() {
-        player.takeCard(deck.getOne());
+        Card card = deck.getOne();
+        player.takeCard(card);
+        if (player.getPoints() > TWENTY_ONE) {
+            dealer.getCards().get(0).setHide(false);
+        }
     }
 
     public Player getPlayer() {
@@ -29,20 +31,37 @@ public class Game {
         return dealer;
     }
 
-    public void stand() { //стоп
-        if (hand.getValue() <= 18){ //после стоп начинает брать карты диллер, до тех пор пока
-            dealer.takeCard(deck.getOne()); //не набёрет 18 очков
+    public void stand() {
+        dealer.getCards().get(0).setHide(false);
+        while (dealer.getPoints() < THRESHOLD) {
+            Card card = deck.getOne();
+            dealer.takeCard(card);
         }
     }
 
     public void setBet(int amount) throws NoMoneyEnoungh { //ставка
-        if (amount > bet){
+        if (amount > bet) {
             throw new NoMoneyEnoungh("Не достаточно средств для ставки!");
         }
-        bet -=amount;
+        bet -= amount;
     }
 
-    public void play() { //начать игру
-        App.launch();
+    public void play() {
+        deck.shuffle();
+        player.clear();
+        dealer.clear();
+        Card firstCard = deck.getOne();
+        player.takeCard(firstCard);
+
+        Card second = deck.getOne();
+        player.takeCard(second);
+        Card hiddenCard = deck.getOne();
+
+        hiddenCard.setHide(true);
+        dealer.takeCard(hiddenCard);
+
+        Card lastCard = deck.getOne();
+        dealer.takeCard(lastCard);
+
     }
 }
